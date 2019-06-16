@@ -208,5 +208,3 @@ extern const pluggable_transport_t ptransport_uart;
 #include "uc/uart_impl.h"
 #include "uc/uart_handlers.h"
 #endif
-
-
