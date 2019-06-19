@@ -63,6 +63,22 @@ typedef enum {
     SPI_SELECTOR_PIO,
 }spi_slave_selector_type;
 
+#define SPI_SUPPORT_SCLK_CTL    (APP_SUPPORT_SPI_CTL_CLKSHAPE || APP_SUPPORT_SPI_CTL_CLKFREQ)
+
+#define SPI_CLKSHAP_DEFINED 0x80
+
+#define SPI_CLKPOL_MASK     0x40
+#define SPI_CLKPOL_AH       0x00
+#define SPI_CLKPOL_AL       0x40
+
+#define SPI_CLKPHA_MASK     0x20
+#define SPI_CLKPHA_CHG_CAP  0x00
+#define SPI_CLKPHA_CAP_CHG  0x20
+
+#define SPI_CLKFREQ_DEFINED 0x10
+
+#define SPI_CLKFREQ_MASK    0x0F
+
 typedef struct SPI_SSFUNC_t{
     void (*const select) (void);
     void (*const deselect) (void);
@@ -73,7 +89,14 @@ typedef struct SPI_SSPIO_t{
     const PINSELECTOR_t pin;
 }spi_sspio_t;
 
+#if SPI_SUPPORT_SCLK_CTL
+typedef uint8_t spi_sclk_conf;
+#endif
+
 typedef struct SPI_SLAVE_t{
+    #if SPI_SUPPORT_SCLK_CTL
+    spi_sclk_conf sclk;
+    #endif
     const spi_slave_selector_type sst;
     union {
         const spi_ssfunc_t func;
