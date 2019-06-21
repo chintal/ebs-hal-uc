@@ -63,22 +63,6 @@ typedef enum {
     SPI_SELECTOR_PIO,
 }spi_slave_selector_type;
 
-#define SPI_SUPPORT_SCLK_CTL    (APP_SUPPORT_SPI_CTL_CLKSHAPE || APP_SUPPORT_SPI_CTL_CLKFREQ)
-
-#define SPI_CLKSHAP_DEFINED 0x80
-
-#define SPI_CLKPOL_MASK     0x40
-#define SPI_CLKPOL_AH       0x00
-#define SPI_CLKPOL_AL       0x40
-
-#define SPI_CLKPHA_MASK     0x20
-#define SPI_CLKPHA_CHG_CAP  0x00
-#define SPI_CLKPHA_CAP_CHG  0x20
-
-#define SPI_CLKFREQ_DEFINED 0x10
-
-#define SPI_CLKFREQ_MASK    0x0F
-
 typedef struct SPI_SSFUNC_t{
     void (*const select) (void);
     void (*const deselect) (void);
@@ -89,26 +73,55 @@ typedef struct SPI_SSPIO_t{
     const PINSELECTOR_t pin;
 }spi_sspio_t;
 
-#if SPI_SUPPORT_SCLK_CTL
-typedef uint8_t spi_sclk_conf;
-#endif
+typedef enum SPI_SCLK_CLKPOL_t{
+    SPI_CLKPOL_AH,
+    SPI_CLKPOL_AL
+}spi_sclk_clkpol_t;
+
+typedef enum SPI_SCLK_CLKPHA_t{
+    SPI_CLKPHA_CHG_CAP,
+    SPI_CLKPHA_CAP_CHG
+}spi_sclk_clkpha_t;
+
+typedef enum SPI_DATA_ENDIAN_t{
+    SPI_DATA_MSBFIRST,
+    SPI_DATA_LSBFIRST
+}spi_data_endian_t;
+
+typedef enum SPI_DATA_WIDTH_t{
+    SPI_DATA_8BIT,
+    SPI_DATA_7BIT
+}spi_data_width_t;
+
+
+typedef union SPI_SCLK_CONF_t{
+    struct {
+        spi_sclk_clkpha_t clkpha : 1;
+        spi_sclk_clkpol_t clkpol : 1;
+        spi_data_endian_t endian: 1;
+        spi_data_width_t width: 1;
+        uint8_t clkdivider : 4;
+    };
+    uint8_t asint;
+}spi_sclk_conf;
+
 
 typedef struct SPI_SLAVE_t{
-    #if SPI_SUPPORT_SCLK_CTL
-    spi_sclk_conf sclk;
+    #if APP_SUPPORT_SPI_CTL
+    const spi_sclk_conf sclk;
     #endif
     const spi_slave_selector_type sst;
-    union {
+    const union {
         const spi_ssfunc_t func;
         const spi_sspio_t pio;
     } ss;
 }spi_slave_t;
 
-void spi_init_slave(uint8_t intfnum, spi_slave_t * slave);
+void spi_init_slave(uint8_t intfnum, const spi_slave_t * slave);
 
-void spi_select_slave(uint8_t intfnum, spi_slave_t * slave);
+void spi_select_slave(uint8_t intfnum, const spi_slave_t * slave);
 
-void spi_deselect_slave(uint8_t intfnum, spi_slave_t * slave);
+void spi_deselect_slave(uint8_t intfnum, const spi_slave_t * slave);
 
 /**@}*/
 
@@ -125,7 +138,7 @@ typedef struct SPI_TRANSACTION_t
     volatile uint8_t rxlen;
     volatile uint8_t * txdata;
     volatile uint8_t * rxdata;
-    spi_slave_t * slave;
+    const spi_slave_t * slave;
 }spi_transaction_t;
 
 static inline void spi_enqueue_transaction(uint8_t intfnum, spi_transaction_t * transaction);
