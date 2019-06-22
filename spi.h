@@ -130,16 +130,41 @@ void spi_deselect_slave(uint8_t intfnum, const spi_slave_t * slave);
  */
 /**@{*/ 
 
+typedef enum SPI_TRANSACTION_TXTYPE_t{
+    SPI_TRANSACTION_TXTYPE_PTR,
+    SPI_TRANSACTION_TXTYPE_SHARED
+}spi_transaction_txtype_t;
+
 typedef struct SPI_TRANSACTION_t
 {
     struct SPI_TRANSACTION_t * next;
+    const spi_slave_t * slave;
     void (* callback) (struct SPI_TRANSACTION_t *);
-    volatile uint8_t txlen; 
+    struct{
+        spi_transaction_txtype_t txtype : 1;
+        _Bool hasrx: 1;
+        _Bool hastx: 1;
+        uint8_t reserved : 5;
+    };
+    volatile uint8_t txlen;
     volatile uint8_t rxlen;
     volatile uint8_t * txdata;
     volatile uint8_t * rxdata;
-    const spi_slave_t * slave;
 }spi_transaction_t;
+
+typedef struct SPI_TRANSACTION_SIMPLETX_t
+{
+    struct SPI_TRANSACTION_t * next;
+    const spi_slave_t * slave;
+    void (* callback) (struct SPI_TRANSACTION_t *);
+    struct{
+        spi_transaction_txtype_t txtype : 1;
+        _Bool hasrx: 1;
+        _Bool hastx: 1;
+        uint8_t reserved : 5;
+    };
+    volatile uint8_t txlen;
+}spi_transaction_simpletx_t;
 
 static inline void spi_enqueue_transaction(uint8_t intfnum, spi_transaction_t * transaction);
 
