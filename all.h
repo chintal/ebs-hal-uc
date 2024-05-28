@@ -69,18 +69,18 @@
  * Include all the drivers. Each of these header files will then go on to 
  * inclde the corresponding implementation files for the platform that is being built. 
  * The implementation files should be within the predefined include paths. Recommended 
- * location is `peripherals/<driver>_impl.h`
+ * location is `hal_platform/<driver>_impl.h`
  */
 
 #include "map.h"
-#include "id.h"
+// #include "id.h"
 // #include "adc.h"
-#include "core.h"
-#include "entropy.h"
+// #include "core.h"
+// #include "entropy.h"
 #include "gpio.h"
 #include "uart.h"
-#include "spi.h"
-#include "timer.h"
-#include "usb.h"
+// #include "spi.h"
+// #include "timer.h"
+// #include "usb.h"
 
 #endif

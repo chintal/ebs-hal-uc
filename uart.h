@@ -134,7 +134,7 @@ static inline uint8_t uart_write(uint8_t intfnum, uint8_t *buffer, uint8_t len, 
  * 
  * @see uart_send_trigger()
  */
-uint8_t uart_vprintf(uint8_t intfnum, const char *format, va_list *args);
+uint8_t uart_vprintf(uint8_t intfnum, const char *format, ...);
 
 
 /**
@@ -204,7 +204,7 @@ extern const pluggable_transport_t ptransport_uart;
 
 #endif
 
-// Set up the implentation
-#include "uc/uart_impl.h"
-#include "uc/uart_handlers.h"
+// Set up the implementation
+#include <hal_platform/uart_impl.h>
+#include <hal_platform/uart_handlers.h>
 #endif

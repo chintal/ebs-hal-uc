@@ -28,6 +28,6 @@
 #ifndef HAL_UC_MAP_H
 #define HAL_UC_MAP_H
 
-#include "uc/uc_map_impl.h"
+#include <hal_platform/uc_map_impl.h>
 
 #endif

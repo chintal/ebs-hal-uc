@@ -126,7 +126,7 @@ static inline HAL_BASE_t gpio_get_input(PORTSELECTOR_t port,
 /**@}*/ 
 
 // Set up the implentation
-#include "uc/gpio_impl.h"
+#include <hal_platform/gpio_impl.h>
 
 #endif
 
